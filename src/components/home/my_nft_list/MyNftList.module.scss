@@ -1,0 +1,23 @@
+.MyNftList{
+  .container{
+    border: 5px solid #6f42c1;
+    .box{
+      display: flex;
+      .img_box{
+        a{
+          cursor: pointer;
+          video{
+            width: 200px;
+          }
+          .disable{
+            -webkit-filter: grayscale(100%);filter: grayscale(100%);
+          }
+        }
+      }
+
+    }
+  }
+}
+.postPopup{
+
+}
