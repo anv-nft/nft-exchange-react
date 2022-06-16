@@ -18,29 +18,19 @@ function Index() {
     const [walletType, setWalletType] = useState(null);
     const [anvPrice, setAnvPrice] = useState(0);
 
-    if (SITE_TYPE !== "SWAP") {
-        document.addEventListener('contextmenu', event => event.preventDefault());
-    }
 
     useEffect(() => {
         const isConnected = window.localStorage.getItem("isConnected");
         console.log(isConnected);
         if (isConnected === 'YES') {
-            const walletType = window.localStorage.getItem("walletType");
-            console.log(walletType);
-            if (walletType === 'METAMASK') {
-                connectMetamask();
-            } else if (walletType === 'KAIKAS') {
-                connectKaikas();
-            }
+            connectKaikas();
         } else {
             setConnectWallet("NO");
         }
-        getAnvPrice();
         checkWalletClosed();
     }, []);
 
-    useEffect(() => { // CHECK METAMASK CONNECTION
+    useEffect(() => { // CHECK CONNECTION
         if (didMount.current) {
             didMount.current = false
             return;
@@ -50,8 +40,7 @@ function Index() {
             logout();
         }
         if (account) {
-            let isMetamask = chainId !== 1001 && chainId !== 8217;
-            loadWalletAttributes(account, isMetamask, chainId);
+            loadWalletAttributes(account, chainId);
         }
     }, [active, account])
 
@@ -60,51 +49,26 @@ function Index() {
             const isConnected = window.localStorage.getItem("isConnected");
             // console.log(isConnected);
             if (isConnected === 'YES') {
-                const walletType = window.localStorage.getItem("walletType");
-                // console.log(walletType);
-                if (walletType === 'KAIKAS') {
-                    const isUnlocked = await window.klaytn._kaikas.isUnlocked();
-                    // console.log(isUnlocked);
-                    if (!isUnlocked) {
-                        await logout();
-                    } else {
-
-
-                    }
+                const isUnlocked = await window.klaytn._kaikas.isUnlocked();
+                // console.log(isUnlocked);
+                if (!isUnlocked) {
+                    await logout();
+                } else {
 
                 }
             }
         }, 1000);
     }
 
-    function loadWalletAttributes(account, isMetamask, chainId) {
+    function loadWalletAttributes(account, chainId) {
         setConnectWallet('YES');
         let tempAccounts = [];
         tempAccounts.push(account);
         setAccounts(tempAccounts);
         setNetworkId(chainId);
-        setWalletType(isMetamask ? "METAMASK" : "KAIKAS");
-        window.localStorage.setItem('walletType', isMetamask ? 'METAMASK' : 'KAIKAS');
+        setWalletType("KAIKAS");
+        window.localStorage.setItem('walletType', "KAIKAS");
         window.localStorage.setItem('isConnected', 'YES');
-    }
-
-    async function connectMetamask() {
-
-        if (isMetamaskWalletInstalled()) {
-            try {
-                await activate(injected);
-
-                const accounts = await window.ethereum.request({method: 'eth_requestAccounts'});
-                const account = accounts[0];
-                loadWalletAttributes(account, true, window.ethereum.networkVersion);
-            } catch (e) {
-                console.log(e)
-            }
-        } else {
-            // set
-            alert("Please install metamask");
-        }
-
     }
 
     async function connectKaikas() {
@@ -115,9 +79,9 @@ function Index() {
                 const accounts = await window.klaytn.enable();
                 const account = accounts[0]
 
-                console.log(window.klaytn.networkVersion)
+                console.log(window.klaytn.networkVersion);
 
-                loadWalletAttributes(account, false, window.klaytn.networkVersion);
+                loadWalletAttributes(account, window.klaytn.networkVersion);
             } catch (e) {
                 console.log(e)
             }
@@ -126,14 +90,6 @@ function Index() {
         }
     }
 
-    async function getAnvPrice() {
-        const res = await GET(MAIN_URL + '/api/anv/price');
-        setAnvPrice(res['data']['price']);
-    }
-
-    function isMetamaskWalletInstalled() {
-        return window.ethereum !== undefined
-    }
 
     function isKaikasWalletInstalled() {
         return window.klaytn !== undefined
@@ -161,7 +117,6 @@ function Index() {
                 <Route exact path="/">
                     <Home accounts={accounts} walletType={walletType}
                           isConnected={isConnectedWallet} networkId={networkId}
-                          handleMetamaskConnect={() => connectMetamask()}
                           handleKaikasConnect={() => connectKaikas()}
                           handleLogout={() => logout()}/>
                 </Route>

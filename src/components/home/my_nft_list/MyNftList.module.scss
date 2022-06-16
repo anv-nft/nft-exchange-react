@@ -1,23 +1,184 @@
-.MyNftList{
-  .container{
-    border: 5px solid #6f42c1;
-    .box{
+.my_nft_list {
+  background: #5815BD;
+  padding: 2rem 3rem;
+
+  h1 {
+    color: #fff;
+    font-weight: 700;
+    font-family: 'Poppins';
+    margin-bottom: 2rem;
+  }
+
+  .container {
+    margin: 0 auto;
+    background: #1C0357;
+    padding: 3rem 2rem;
+    border-radius: 1rem;
+
+    .box {
       display: flex;
-      .img_box{
-        a{
-          cursor: pointer;
-          video{
-            width: 200px;
-          }
-          .disable{
-            -webkit-filter: grayscale(100%);filter: grayscale(100%);
-          }
-        }
+      justify-content: space-between;
+      flex-wrap: wrap;
+      @media screen and (max-width: 576px) {
+        justify-content: center;
       }
 
+      .img_box {
+        background: #FFF;
+        width: 25%;
+        min-width: 200px;
+        max-width: 330px;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 1rem;
+
+        a {
+          color: #5D5D5D;
+          font-size: 1.3rem;
+          font-weight: 700;
+          font-family: 'Poppins';
+          cursor: pointer;
+          text-decoration: none;
+
+          video {
+            border-radius: 5px;
+            width: 100%;
+          }
+
+          .disable {
+            position: relative;
+            //-webkit-filter: grayscale(100%);filter: grayscale(100%);
+            .disable_stamp {
+              width: 100%;
+              height: calc(100% - 20px);
+              background-image: url("../../../assets/images/icon/stamp.png");
+              background-repeat: no-repeat;
+              background-position: center;
+              background-size: cover;
+              position: absolute;
+              top: 0;
+              left: 0;
+            }
+          }
+
+        }
+      }
+    }
+
+    .no_wallet {
+      background: #FFF;
+      text-align: center;
+      padding: 3rem;
+
+      img {
+        opacity: 0.4;
+        margin-bottom: 10px;
+      }
+
+      p {
+        font-size: 2rem;
+        color: #777;
+        font-weight: 500;
+      }
     }
   }
 }
-.postPopup{
 
+.pop_title {
+  img {
+    width: 10px;
+    padding-bottom: 3px;
+  }
+
+  display: inline-block;
+  width: 100%;
+  font-weight: bold;
+  padding-left: 5px;
+  padding-bottom: 5px;
+  border-bottom: 3px solid #733ACA;
+  margin-bottom: 1rem;
 }
+
+.term_box {
+  margin-bottom: 2rem;
+  input{
+    margin-left: 10px;
+    accent-color: #9300D2;
+  }
+  input[type="checkbox"]:focus {
+    outline: 1px solid #9300D2;
+  }
+
+  .term_text {
+    height: 10rem;
+    overflow: auto;
+    padding: 10px;
+  }
+}
+
+.pop_form {
+  display: inline-block;
+  width: 100%;
+  border-bottom: 1px solid #D1D1D1;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+  label {
+    width: 120px;
+    font-weight: bold;
+    text-align: center;
+    height: 2.3rem;
+    line-height: 2.3rem;
+    margin-bottom: 0;
+  }
+
+  input, select {
+    height: 2.3rem;
+    margin: 10px;
+  }
+
+  input:focus {
+    outline: 1px solid #9300D2;
+  }
+
+  div {
+    a {
+      margin: 10px;
+      display: inline-block;
+      padding: 0px 10px;
+      height: 2.3rem;
+      line-height: 2.3rem;
+      color: #9300D2 !important;
+      font-size: 0.8rem;
+      border: 1px solid #9300D2;
+      cursor: pointer;
+    }
+  }
+}
+
+.btnBox {
+  padding: 2rem;
+  text-align: center;
+
+  button {
+    display: inline-block;
+    font-family: 'Poppins';
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #FFF;
+    padding: 0.5rem 2rem;
+    border-radius: 4rem;
+
+    border: none;
+  }
+
+  button:nth-child(1) {
+    background: #999;
+    margin-right: 2rem;
+  }
+
+  button:nth-child(2) {
+    background: #ab00f3;
+  }
+}
+

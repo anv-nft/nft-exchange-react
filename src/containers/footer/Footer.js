@@ -1,16 +1,20 @@
 import React from 'react'
+import logo2 from "../../assets/images/icon/aniverse_logo.png";
 
 function Footer() {
-	return (
-		<div className="footer">
-			<div className="container">
-				<div className="row">
-					<p className="footer_text_001">Copyright © 2021 ANIVERSE FOUNDATION LTD. All rights reserved. <br />
-						6 EU TONG SEN STREET #11-10N THE CENTRAL SINGAPORE</p>
-				</div>
-			</div>
-		</div>
-	)
+    return (
+        <div className="footer">
+            <div className="row">
+                <img src={logo2} style={{width: '200px'}}/>
+            </div>
+            <div className="row">
+                <a href="mailto:contact@aniverse.io">contact@aniverse.io</a>
+            </div>
+            <div className="row text-right">
+                <p className="footer_text_001">COPYRIGHT © 2021 ANIVERSE All RIGHTS RESERVED. </p>
+            </div>
+        </div>
+    )
 }
 
 export default Footer

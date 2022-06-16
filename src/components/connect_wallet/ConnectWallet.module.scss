@@ -1,0 +1,43 @@
+.connect_wallet{
+  padding: 15rem 0;
+  background-image: url("../../assets/images/bg/main_banner.jpg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+
+  .text_box{
+    margin: 0 auto;
+    width: 600px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    color: #FFF;
+
+      h1{
+        font-weight: 700;
+        font-family: 'Poppins';
+      }
+      p{
+        font-family: 'Noto Sans KR', sans-serif;
+        font-weight: 400;
+      }
+  }
+  .button_box{
+    text-align: center;
+    .wallet_button{
+      display: inline-block;
+      font-family: 'Poppins';
+      color: #FFF;
+      padding: 0.5rem 2rem;
+      border-radius: 4rem;
+      background: #ab00f3;
+      border: none;
+    }
+    .wallet_button:active{
+      background: #5D5D5D;
+    }
+    .approve_button{
+
+    }
+  }
+}

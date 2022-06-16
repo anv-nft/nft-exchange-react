@@ -1,7 +1,7 @@
 import React, {useEffect, useState,} from 'react'
 import {Button, Dropdown, Form, Modal, Nav, Navbar, NavDropdown, OverlayTrigger} from 'react-bootstrap';
 import KarakaisIcon from '../../assets/images/connect_wallet/karakais_icon.svg';
-
+import styles from "./ConnectWallet.module.scss"
 
 function ConnectWallet(props) {
 
@@ -21,28 +21,39 @@ function ConnectWallet(props) {
     function isKaikasWalletInstalled() {
         return window.klaytn !== undefined
     }
+
     function confirmLogout() {
-        if(window.confirm('로그아웃 하시겠습니까 ?')){
+        if (window.confirm('로그아웃 하시겠습니까 ?')) {
             props.handleLogout()
         }
     }
+
     return (
         <>
-            <section className="wallet_sec">
-                {props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
-                    <div className="row">
-                        <div className="col-lg-8 mx-auto text-center">
-                            <Button onClick={() => confirmLogout()} className="connect-wallet text-truncate ">{props.accounts}</Button>
-                        </div>
+            <section className={styles.connect_wallet}>
+                <div className={styles.text_box}>
+                    <h1>
+                        ANIVERSE<br/>
+                        Ticket To Burn
+                    </h1>
+                    <p>
+                        Stake Larva NFT and earn rewards for the Ecosystem<br/>
+                        participants!<br/>
+                        Stake Larva NFT and earn rewards for the Ecosystem<br/>
+                        participants!<br/>
+                        rewards at any time
+                    </p>
+                    <div className={styles.button_box}>
+                        {props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
+                            <button onClick={() => confirmLogout()}
+                                    className={styles.wallet_button}>{props.accounts}</button>
+                        ) : (
+                            <button onClick={() => handleKaikas()} className={styles.wallet_button}>Connect
+                                Wallet</button>
+                        )
+                        }
                     </div>
-                ) : (
-                    <div className="row">
-                        <div className="col-lg-8 mx-auto text-center">
-                            <Button onClick={() => handleKaikas()} className="connect-wallet text-truncate ">Connect Wallet</Button>
-                        </div>
-                    </div>
-                )
-                }
+                </div>
             </section>
 
             <Modal className="network_modal" centered size="xs" show={isKaikasInstalled}

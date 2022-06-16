@@ -95,8 +95,14 @@
     background: #1b1e21;
     color: #FFF;
     padding: 5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
-
+.footer a {
+    text-decoration: none;
+    color: #FFF;
+}
 .no_data_found_text {
     text-align: center;
     font-weight: 600;
@@ -105,4 +111,14 @@
     position: relative;
     padding: 50px !important;
     width: 100%;
+}
+.modal-header{
+ padding: 2rem;
+}
+.modal-header > button{
+    position: absolute;
+    right: 2rem;
+}
+.modal-content{
+    border-radius: 3rem;
 }
