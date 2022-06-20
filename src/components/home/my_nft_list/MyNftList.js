@@ -126,6 +126,8 @@ function MyNftList(props) {
         const kip17instance = new caver.klay.KIP17("0xf550014532471511435af9b2b2dadd0189ce0f92");
         const sender = props.accounts[0];
         const tokenNumber = parseInt(nftToken, 16);
+        alert('소각 완료');
+        return false;
         await kip17instance.burn(tokenNumber,  {from: sender}).then(async result => {
             //const testdata = {
             //     "blockHash": "0xeebe8161ca2ffcd86d37babf5c062a3a0d8a67a25478a18b45324743bb2dcc42",
@@ -184,7 +186,6 @@ function MyNftList(props) {
             //     }
             // }
             // }
-            console.log(result);
         }).catch(error => {
             console.log(error);
         })
