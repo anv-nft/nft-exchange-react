@@ -41,6 +41,7 @@ function MyNftList(props) {
     const formPostAddress = useRef();
     const formPostAddress2 = useRef();
     const [agreeState, setAgreeState] = useState(false); // 동의 여부
+    const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
     // const [formPhoneNumber, setFormPhoneNumber] = useState([]); // 연락처
     const [homeAddress, setHomeAddress] = useState([]);
     let history = useHistory();
@@ -68,56 +69,59 @@ function MyNftList(props) {
         setNftList(nftListRef.current);
     }
 
-    function modalFadeIn(tokenId) {
-        setNftTokenId(tokenId)
+    function modalFadeIn(tokenId,postUse) {
+        setNftTokenId(tokenId);
+        setPostUseState(postUse);
         modalOpen();
     }
     async function nftTransfer(nftToken) {
-        // if(!agreeState){
-        //     alert("개인정보 수집 약관에 동의 해주세요.");
-        //     console.log(agreeBox.current);
-        //     return agreeBox.current.focus();
-        // }
-        // const regName = /^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
-        // if(formName.current.value == ""){
-        //     alert("성명을 입력해주세요.");
-        //     return formName.current.focus();
-        // }
-        // if(regName.test(formName.current.value) === false){
-        //     alert("성명은 한글 또는 영문 한가지만 사용 가능합니다.");
-        //     return formName.current.focus();
-        // }
-        //
-        // if(formPhoneNumber1.current.value == ""){
-        //     alert("연락처 앞자리를 선택해주세요.");
-        //     return formPhoneNumber1.current.focus();
-        // }
-        // if(formPhoneNumber2.current.value == ""){
-        //     alert("연락처를 입력해주세요.");
-        //     return formPhoneNumber2.current.focus();
-        // }
-        // const regPhone2 = /([0-9]{3,4})$/;
-        // if(regPhone2.test(formPhoneNumber2.current.value) === false){
-        //     alert("숫자 3~4자리를 입력해주세요.");
-        //     return formPhoneNumber2.current.focus();
-        // }
-        // if(formPhoneNumber3.current.value == ""){
-        //     alert("연락처를 입력해주세요.");
-        //     return formPhoneNumber3.current.focus();
-        // }
-        // const regPhone3 = /([0-9]{4})$/;
-        // if(regPhone3.test(formPhoneNumber3.current.value) === false){
-        //     alert("숫자 4자리를 입력해주세요.");
-        //     return formPhoneNumber3.current.focus();
-        // }
-        // if(formPostZip.current.value == "" || formPostAddress.current.value == ""){
-        //     alert("주소를 입력해주세요.");
-        //     return formPostZip.current.focus();
-        // }
-        // if(formPostAddress2.current.value == ""){
-        //     alert("상세주소를 입력해주세요.");
-        //     return formPostAddress2.current.focus();
-        // }
+        if(!agreeState){
+            alert("개인정보 수집 약관에 동의 해주세요.");
+            console.log(agreeBox.current);
+            return agreeBox.current.focus();
+        }
+        const regName = /^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
+        if(formName.current.value == ""){
+            alert("성명을 입력해주세요.");
+            return formName.current.focus();
+        }
+        if(regName.test(formName.current.value) === false){
+            alert("성명은 한글 또는 영문 한가지만 사용 가능합니다.");
+            return formName.current.focus();
+        }
+
+        if(formPhoneNumber1.current.value == ""){
+            alert("연락처 앞자리를 선택해주세요.");
+            return formPhoneNumber1.current.focus();
+        }
+        if(formPhoneNumber2.current.value == ""){
+            alert("연락처를 입력해주세요.");
+            return formPhoneNumber2.current.focus();
+        }
+        const regPhone2 = /([0-9]{3,4})$/;
+        if(regPhone2.test(formPhoneNumber2.current.value) === false){
+            alert("숫자 3~4자리를 입력해주세요.");
+            return formPhoneNumber2.current.focus();
+        }
+        if(formPhoneNumber3.current.value == ""){
+            alert("연락처를 입력해주세요.");
+            return formPhoneNumber3.current.focus();
+        }
+        const regPhone3 = /([0-9]{4})$/;
+        if(regPhone3.test(formPhoneNumber3.current.value) === false){
+            alert("숫자 4자리를 입력해주세요.");
+            return formPhoneNumber3.current.focus();
+        }
+        if(postUseState){
+            if(formPostZip.current.value == "" || formPostAddress.current.value == ""){
+                alert("주소를 입력해주세요.");
+                return formPostZip.current.focus();
+            }
+            if(formPostAddress2.current.value == ""){
+                alert("상세주소를 입력해주세요.");
+                return formPostAddress2.current.focus();
+            }
+        }
 
         // Argument : KIP17 Contract Address -> 해당 주소는 테스트로 Deploy 한 Contract Address
         // (https://baobab.scope.klaytn.com/account/0xf550014532471511435af9b2b2dadd0189ce0f92?tabId=txList)
@@ -127,6 +131,7 @@ function MyNftList(props) {
         const sender = props.accounts[0];
         const tokenNumber = parseInt(nftToken, 16);
         alert('소각 완료');
+        modalClose();
         return false;
         await kip17instance.burn(tokenNumber,  {from: sender}).then(async result => {
             //const testdata = {
@@ -234,14 +239,14 @@ function MyNftList(props) {
                                             switch (item.use) {
                                                 case "Y":
                                                     return <a onClick={() => {
-                                                        modalFadeIn(item.tokenId)
+                                                        modalFadeIn(item.tokenId, item.postUse)
                                                     }} className="">
                                                         <video src={item.image}/>
                                                         #{parseInt(item.tokenId, 16)} GIFT
                                                     </a>;
                                                 case "N":
                                                     return <a onClick={() => {
-                                                        modalFadeIn(item.tokenId)
+                                                        modalFadeIn(item.tokenId, item.postUse)
                                                     }} className="">
                                                         <div className={styles.disable}>
                                                             <video className={styles.disable} src={item.image}/>
@@ -308,7 +313,7 @@ function MyNftList(props) {
                         /> 위 약관에 동의합니다.
                     </div>
                     <div>
-                        <span className={styles.pop_title}><img src={popIcon}/> 주소입력</span>
+                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
                         <form>
                             <div className={styles.pop_form}>
                                 <label>성명</label>
@@ -328,16 +333,22 @@ function MyNftList(props) {
                                 <input ref={formPhoneNumber2} maxLength={4} style={{width: "100px"}} type={"text"} name={"ph2"}/> -
                                 <input ref={formPhoneNumber3} maxLength={4} style={{width: "100px"}} type={"text"} name={"ph3"}/>
                             </div>
-                            <div className={styles.pop_form} style={{display: "flex", borderBottom: "3px solid #999"}}>
-                                <label>주소</label>
-                                <div style={{width: "calc(100% - 120px)"}}>
-                                    <a onClick={postModalOpen}>주소검색</a>
-                                    <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0]} placeholder="우편번호"
-                                           readOnly/><br/>
-                                    <input ref={formPostAddress} style={{width: "calc(100% - 20px)"}} type="text" name={"address1"} value={homeAddress[1]} placeholder="주소" readOnly/><br/>
-                                    <input ref={formPostAddress2} style={{width: "calc(100% - 20px)"}} type="text" name={"address2"} placeholder="상세주소"/>
+                            {postUseState &&
+                                <div className={styles.pop_form}
+                                     style={{display: "flex", borderBottom: "3px solid #999"}}>
+                                    <label>주소</label>
+                                    <div style={{width: "calc(100% - 120px)"}}>
+                                        <a onClick={postModalOpen}>주소검색</a>
+                                        <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0]}
+                                               placeholder="우편번호"
+                                               readOnly/><br/>
+                                        <input ref={formPostAddress} style={{width: "calc(100% - 20px)"}} type="text"
+                                               name={"address1"} value={homeAddress[1]} placeholder="주소" readOnly/><br/>
+                                        <input ref={formPostAddress2} style={{width: "calc(100% - 20px)"}} type="text"
+                                               name={"address2"} placeholder="상세주소"/>
+                                    </div>
                                 </div>
-                            </div>
+                            }
                         </form>
                         <span style={{color: "red"}}>* 신청이 완료되면 보유한 NFT는 소각 처리됩니다.</span><br/>
                         <span style={{color: "red"}}>* TokenID : {nftTokenId}</span><br/>
