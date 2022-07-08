@@ -11,19 +11,19 @@ export default function Home(props) {
             <img src={bg_image} style={{ width:'100%', position: 'absolute', zIndex: -1 }} />
             {props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
                 <>
-                    <ConnectWallet accounts={props.accounts} walletType={props.walletType}
+                    <ConnectWallet accounts={props.accounts} apiToken={props.apiToken} walletType={props.walletType}
                                    isConnected={props.isConnected} networkId={props.networkId}
                                    handleKaikasConnect={() => props.handleKaikasConnect()}
                                    handleLogout={() => props.handleLogout()}/>
 
                 </>
             ) : (
-                <ConnectWallet accounts={props.accounts} walletType={props.walletType}
+                <ConnectWallet accounts={props.accounts} apiToken={props.apiToken} walletType={props.walletType}
                                isConnected={props.isConnected} networkId={props.networkId}
                                handleKaikasConnect={() => props.handleKaikasConnect()}/>
             )
             }
-            <MyNftList accounts={props.accounts} isConnected={props.isConnected}/>
+            <MyNftList accounts={props.accounts} apiToken={props.apiToken} isConnected={props.isConnected}/>
         </>
     );
 }

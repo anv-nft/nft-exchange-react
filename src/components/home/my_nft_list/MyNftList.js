@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react'
 import {Modal, Button, Form} from 'react-bootstrap';
-import {GET, MAIN_URL, POST} from "../../../api/api";
+import {POST} from "../../../api/api";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import {useHistory} from "react-router-dom";
@@ -47,7 +47,9 @@ function MyNftList(props) {
     let history = useHistory();
 
     useEffect(() => {
-        getMyNftList();
+        if(props.accounts[0] !== undefined && props.apiToken){
+            getMyNftList();
+        }
     }, [props.accounts]);
 
     useEffect(() => {
@@ -56,8 +58,7 @@ function MyNftList(props) {
     }, [nftTokenId]);
 
     async function getMyNftList() {
-        // const res = await GET(`/api/v1/exchange/nft?address=${props.accounts}`);
-        const res = await GET(`/api/v1/exchange/nftTest`);
+        const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts}, props.apiToken);
         let listOfNft = [];
 
         for (let i = 0; i < res.data.length; i++) {
@@ -127,73 +128,32 @@ function MyNftList(props) {
         // (https://baobab.scope.klaytn.com/account/0xf550014532471511435af9b2b2dadd0189ce0f92?tabId=txList)
         const provider = window['klaytn'];
         const caver = new Caver(provider);
-        const kip17instance = new caver.klay.KIP17("0xf550014532471511435af9b2b2dadd0189ce0f92");
+        const kip17instance = new caver.klay.KIP17("0x7653556eec6a827c18a9481c6d6df27244cd6049");
         const sender = props.accounts[0];
         const tokenNumber = parseInt(nftToken, 16);
-        alert('소각 완료');
-        modalClose();
-        return false;
         await kip17instance.burn(tokenNumber,  {from: sender}).then(async result => {
-            //const testdata = {
-            //     "blockHash": "0xeebe8161ca2ffcd86d37babf5c062a3a0d8a67a25478a18b45324743bb2dcc42",
-            //     "blockNumber": 93535893,
-            //     "contractAddress": null,
-            //     "from": "0x0d1b527d41225c021b26b6832bbe3fcaeff7f078",
-            //     "gas": "0x2e711",
-            //     "gasPrice": "0x3a35294400",
-            //     "gasUsed": 55949,
-            //     "input": "0x42966c680000000000000000000000000000000000000000000000000000000000000010",
-            //     "logsBloom": "0x00000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080000000000000000000000010000000000000010008000000800000000000000000000000000000000000000000020000000000000000000800000000000000000000000010040000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000020002000000000000000000000000000000000000002000000000000000000000000",
-            //     "nonce": "0x1",
-            //     "senderTxHash": "0x1daa5b552e16bd2a0c10138efed78acd76da5abdb58f8493d8e68446146b3464",
-            //     "signatures": [
-            //     {
-            //         "V": "0x7f5",
-            //         "R": "0xd74b392f8a2cc74da7a77c9c7928dde503b705b7ed63c04b90ff4886cf499caf",
-            //         "S": "0x6db1630594069a298f62a619b76d72161eedd3960b408fa971535d809cc6d740"
-            //     }
-            // ],
-            //     "status": true,
-            //     "to": "0xf550014532471511435af9b2b2dadd0189ce0f92",
-            //     "transactionHash": "0x1daa5b552e16bd2a0c10138efed78acd76da5abdb58f8493d8e68446146b3464",
-            //     "transactionIndex": 0,
-            //     "type": "TxTypeLegacyTransaction",
-            //     "typeInt": 0,
-            //     "value": "0x0",
-            //     "events": {
-            //     "Transfer": {
-            //         "address": "0xf550014532471511435aF9b2B2daDd0189ce0f92",
-            //             "blockNumber": 93535893,
-            //             "transactionHash": "0x1daa5b552e16bd2a0c10138efed78acd76da5abdb58f8493d8e68446146b3464",
-            //             "transactionIndex": 0,
-            //             "blockHash": "0xeebe8161ca2ffcd86d37babf5c062a3a0d8a67a25478a18b45324743bb2dcc42",
-            //             "logIndex": 0,
-            //             "id": "log_11f0a185",
-            //             "returnValues": {
-            //             "0": "0x0d1B527D41225C021b26B6832bBe3fcAEfF7f078",
-            //                 "1": "0x0000000000000000000000000000000000000000",
-            //                 "2": "16",
-            //                 "from": "0x0d1B527D41225C021b26B6832bBe3fcAEfF7f078",
-            //                 "to": "0x0000000000000000000000000000000000000000",
-            //                 "tokenId": "16"
-            //         },
-            //         "event": "Transfer",
-            //             "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-            //             "raw": {
-            //             "data": "0x",
-            //                 "topics": [
-            //                 "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-            //                 "0x0000000000000000000000000d1b527d41225c021b26b6832bbe3fcaeff7f078",
-            //                 "0x0000000000000000000000000000000000000000000000000000000000000000",
-            //                 "0x0000000000000000000000000000000000000000000000000000000000000010"
-            //             ]
-            //         }
-            //     }
-            // }
-            // }
+            const saveData = {
+                tokenId: nftToken,
+                ownerId: props.accounts[0],
+                exchangeName: formName.current.value,
+                exchangeHp: `${formPhoneNumber1.current.value}-${formPhoneNumber2.current.value}-${formPhoneNumber3.current.value}`,
+                transactionHash: result.transactionHash,
+                exchangeZip: formPostZip.current.value,
+                exchangeAddress: formPostAddress.current.value,
+                exchangeAddress2: formPostAddress2.current.value,
+            }
+            const saveResult = await POST(`/api/v1/exchange/save`, saveData, props.apiToken);
+            if(saveResult.result == 'success'){
+                alert('소각 완료');
+            } else {
+                alert('소각중 오류가 발생하였습니다.');
+            }
         }).catch(error => {
+            alert('소각 실패');
             console.log(error);
         })
+        getMyNftList();
+        modalClose();
     }
 
     const agreeCheck = (agree) => {
@@ -236,23 +196,21 @@ function MyNftList(props) {
                                 {nftList.map((item, index) => (
                                     <div key={index} className={styles.img_box}>
                                         {(() => {
-                                            switch (item.use) {
-                                                case "Y":
-                                                    return <a onClick={() => {
-                                                        modalFadeIn(item.tokenId, item.postUse)
-                                                    }} className="">
-                                                        <video src={item.image}/>
-                                                        #{parseInt(item.tokenId, 16)} GIFT
-                                                    </a>;
+                                            switch (item.is_exchanged) {
                                                 case "N":
                                                     return <a onClick={() => {
-                                                        modalFadeIn(item.tokenId, item.postUse)
+                                                        modalFadeIn(item.token_id, item.is_need_addr)
                                                     }} className="">
-                                                        <div className={styles.disable}>
-                                                            <video className={styles.disable} src={item.image}/>
-                                                            <span className={styles.disable_stamp}></span>
-                                                            <s>#{parseInt(item.tokenId, 16)} GIFT</s>
-                                                        </div>
+                                                        <img src={item.image}/>
+                                                        #{parseInt(item.token_id, 16)} {item.name} GIFT
+                                                    </a>;
+                                                case "Y":
+                                                    return <a onClick={() => {
+                                                        modalFadeIn(item.token_id, item.is_need_addr)
+                                                    }} className={styles.disable}>
+                                                        <img className={styles.disable} src={item.image}/>
+                                                        <span className={styles.disable_stamp}></span>
+                                                        <s>#{parseInt(item.token_id, 16)} {item.name} GIFT</s>
                                                     </a>;
                                             }
                                         })()}
@@ -339,11 +297,11 @@ function MyNftList(props) {
                                     <label>주소</label>
                                     <div style={{width: "calc(100% - 120px)"}}>
                                         <a onClick={postModalOpen}>주소검색</a>
-                                        <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0]}
+                                        <input ref={formPostZip} type="text" name={"post"} value={homeAddress[0] || ''}
                                                placeholder="우편번호"
                                                readOnly/><br/>
                                         <input ref={formPostAddress} style={{width: "calc(100% - 20px)"}} type="text"
-                                               name={"address1"} value={homeAddress[1]} placeholder="주소" readOnly/><br/>
+                                               name={"address1"} value={homeAddress[1] || ''} placeholder="주소" readOnly/><br/>
                                         <input ref={formPostAddress2} style={{width: "calc(100% - 20px)"}} type="text"
                                                name={"address2"} placeholder="상세주소"/>
                                     </div>
