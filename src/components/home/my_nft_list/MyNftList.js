@@ -23,15 +23,10 @@ function MyNftList(props) {
 
     const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
 
-
-
+    // 교환정보 입력 모달
     const [modalShow, setModalShow] = useState(false);
     const modalClose = () => setModalShow(false);
     const modalOpen = () => setModalShow(true);
-    const [postModalShow, setPostModalShow] = useState(false);
-    const postModalClose = () => setPostModalShow(false);
-    const postModalOpen = () => setPostModalShow(true);
-
     const agreeBox = useRef();
     const formName = useRef();
     const formPhoneNumber1 = useRef();
@@ -42,6 +37,17 @@ function MyNftList(props) {
     const formPostAddress2 = useRef();
     const [agreeState, setAgreeState] = useState(false); // 동의 여부
     const [postUseState, setPostUseState] = useState(false); // 주소 사용 여부
+    // 주소창 모달
+    const [postModalShow, setPostModalShow] = useState(false);
+    const postModalClose = () => setPostModalShow(false);
+    const postModalOpen = () => setPostModalShow(true);
+    // 교환정보확인 모달
+    const [viewModalShow, setViewModalShow] = useState(false);
+    const viewModalClose = () => setViewModalShow(false);
+    const viewModalOpen = () => setViewModalShow(true);
+    const [viewForm, setViewForm] = useState(['Name','Hp','Zip','Address','Address2']);
+
+
     // const [formPhoneNumber, setFormPhoneNumber] = useState([]); // 연락처
     const [homeAddress, setHomeAddress] = useState([]);
     let history = useHistory();
@@ -74,6 +80,13 @@ function MyNftList(props) {
         setNftTokenId(tokenId);
         setPostUseState(postUse);
         modalOpen();
+    }
+    async function viewModalFadeIn(tokenId,postUse) {
+        setNftTokenId(tokenId);
+        setPostUseState(postUse);
+        const res = await POST(`/api/v1/exchange/info`,{tokenId}, props.apiToken);
+        setViewForm([res.data.name, res.data.hp, res.data.zip, res.data.address, res.data.address2]);
+        viewModalOpen();
     }
     async function nftTransfer(nftToken) {
         if(!agreeState){
@@ -196,23 +209,31 @@ function MyNftList(props) {
                                 {nftList.map((item, index) => (
                                     <div key={index} className={styles.img_box}>
                                         {(() => {
-                                            switch (item.is_exchanged) {
-                                                case "N":
-                                                    return <a onClick={() => {
-                                                        modalFadeIn(item.token_id, item.is_need_addr)
-                                                    }} className="">
-                                                        <img src={item.image}/>
-                                                        #{parseInt(item.token_id, 16)} {item.name} GIFT
-                                                    </a>;
-                                                case "Y":
-                                                    return <a onClick={() => {
-                                                        modalFadeIn(item.token_id, item.is_need_addr)
-                                                    }} className={styles.disable}>
-                                                        <img className={styles.disable} src={item.image}/>
-                                                        <span className={styles.disable_stamp}></span>
-                                                        <s>#{parseInt(item.token_id, 16)} {item.name} GIFT</s>
-                                                    </a>;
+                                            if(item.is_complete == "N"){
+                                                switch (item.is_exchanged) {
+                                                    case "N":
+                                                        return <a onClick={() => {
+                                                            modalFadeIn(item.token_id, item.is_need_addr)
+                                                        }} className="">
+                                                            <img src={item.image}/>
+                                                            #{parseInt(item.token_id, 16)} {item.name} GIFT
+                                                        </a>;
+                                                    case "Y":
+                                                        return <a onClick={() => {
+                                                            viewModalFadeIn(item.token_id, item.is_need_addr)
+                                                        }}>
+                                                            <img className={styles.disable} src={item.image}/>
+                                                            <s>#{parseInt(item.token_id, 16)} {item.name} GIFT</s>
+                                                        </a>;
+                                                }
+                                            } else {
+                                                return <div className={styles.complete}>
+                                                    <img src={item.image}/>
+                                                    <span className={styles.complete_stamp}></span>
+                                                    <s>#{parseInt(item.token_id, 16)} {item.name} GIFT</s>
+                                                </div>;
                                             }
+
                                         })()}
                                     </div>
                                 ))
@@ -250,19 +271,16 @@ function MyNftList(props) {
                     <div className={styles.term_box}>
                         <span className={styles.pop_title}><img src={popIcon}/> 개인정보수집약관</span>
                         <p className={styles.term_text}>
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
-                            약관내용약관내용약관내용약관내용약관내용약관내용약관내용약관내용
+                            개인 정보 수집·이용 동의<br/>
+                            <br/>
+                            수집된 회원님의 개인 정보는 본인 확인 및 상품 지급 이외의 목적으로 활용되지 않습니다.<br/>
+                            <br/>
+                            · 개인 정보 수집·이용 동의(필수)<br/>
+                            - 수집 및 이용 목적 : 본인 확인 및 상품 지급<br/>
+                            - 수집 항목 : 이름, 주소, 휴대폰 번호, 카이카스 지갑 주소<br/>
+                            - 보유 및 이용 기간 : 이벤트 종료 후 30일 동안 보유하며, 원칙적으로 개인 정보의 수집 및 이용 목적이 달성 되면 지체 없이 파기함<br/>
+                            <br/>
+                            ※ 개인정보 수집·이용에 대하여 동의를 거부할 권리를 가지고 있으며, 개인정보 수집·이용에 대한 미동의 시 이벤트에 참여하실 수 없습니다.<br/>
                         </p>
                         <input ref={agreeBox}
                                type="checkbox" name={"agree"} onChange={e => {
@@ -321,6 +339,7 @@ function MyNftList(props) {
                     </div>
                 </Modal.Body>
             </Modal>
+            {/*주소 모달*/}
             <Modal show={postModalShow} onHide={postModalClose}>
                 <DaumPostcode style={postCodeStyle} onComplete={handlePostCode}/>
                 <Modal.Footer>
@@ -328,6 +347,42 @@ function MyNftList(props) {
                         취소
                     </Button>
                 </Modal.Footer>
+            </Modal>
+            {/*정보확인 모달*/}
+            <Modal size="lg" show={viewModalShow} onHide={viewModalClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title className="mx-auto">My Ticket 신청정보</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <div>
+                        <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
+                            <div className={styles.pop_form}>
+                                <label>성명</label>
+                                {viewForm[0]}
+                            </div>
+                            <div className={styles.pop_form}>
+                                <label>연락처</label>
+                                {viewForm[1]}
+                            </div>
+                            {postUseState &&
+                                <div className={styles.pop_form}
+                                     style={{display: "flex", borderBottom: "3px solid #999"}}>
+                                    <label>주소</label>
+                                    <div style={{width: "calc(100% - 120px)"}}>
+                                        {viewForm[2]}<br/>
+                                        {viewForm[3]}<br/>
+                                        {viewForm[4]}
+                                    </div>
+                                </div>
+                            }
+                        <span style={{color: "red"}}>* TokenID : {nftTokenId}</span><br/>
+                        <div className={styles.btnBox}>
+                            <button onClick={viewModalClose}>
+                                닫기
+                            </button>
+                        </div>
+                    </div>
+                </Modal.Body>
             </Modal>
         </>
     )
