@@ -1,16 +1,8 @@
-import React, {useEffect, useState} from 'react'
-import {Link, useHistory, useLocation} from "react-router-dom";
+import React from 'react'
+
 import logo from "../../assets/images/icon/main_logo_beta.wh.svg";
 
-
-
-function Header(props) {
-    const [accounts, setAccounts] = useState(undefined);
-
-    useEffect(() => {
-        setAccounts(props.accounts);
-    }, [props.accounts]);
-
+function Header() {
     return (
         <>
             <div style={{ width:'100%', background: '#070721' }}>
