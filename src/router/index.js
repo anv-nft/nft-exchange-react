@@ -30,19 +30,18 @@ function Index() {
         checkWalletClosed();
     }, []);
 
-    useEffect(() => { // CHECK CONNECTION
+    useEffect(async () => { // CHECK CONNECTION
         if (didMount.current) {
             didMount.current = false
             return;
         }
-
         if (!active) {
-            logout();
+            await logout();
         }
         if (account) {
             loadWalletAttributes(account, chainId);
         }
-    }, [active, account])
+    }, [active, account]);
 
     async function checkWalletClosed() {
         setInterval(async () => {
@@ -78,7 +77,7 @@ function Index() {
 
                 const accounts = await window.klaytn.enable();
                 const account = accounts[0]
-
+                // todo : 8217 네트워크 체크
                 console.log(window.klaytn.networkVersion);
                 const token = localStorage.getItem('aniverse_token');
                 if(token === null){
@@ -99,6 +98,14 @@ function Index() {
                     localStorage.setItem('aniverse_token',  signin.token);
                     setApiToken(signin.token);
                     loadWalletAttributes(account, window.klaytn.networkVersion);
+                } else if(token){
+                    const tokenCheck = await POST(`/api/v1/auth/tokencheck`,{address: account},token);
+                    if(tokenCheck.result === 'success' && tokenCheck.address === account){
+                        setApiToken(token);
+                        loadWalletAttributes(account, window.klaytn.networkVersion);
+                    }else {
+                        await logout();
+                    }
                 } else {
                     await logout();
                 }
@@ -117,6 +124,7 @@ function Index() {
     }
 
     async function logout() {
+        console.log('logout');
         setConnectWallet("NO");
         window.localStorage.setItem("isConnected", "NO");
         window.localStorage.setItem("walletType", null);
@@ -134,7 +142,7 @@ function Index() {
     return (
 
         <BrowserRouter>
-            <Header accounts={accounts}/>
+            <Header/>
             <Switch>
                 <Route exact path="/">
                     <Home accounts={accounts} apiToken={apiToken} walletType={walletType}

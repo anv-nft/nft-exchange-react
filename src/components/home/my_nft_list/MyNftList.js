@@ -12,6 +12,7 @@ import connectIcon from "../../../assets/images/icon/connect.png"
 import popIcon from "../../../assets/images/icon/pop_icon.svg"
 
 function MyNftList(props) {
+    const contractAddress = "0x7653556eec6a827c18a9481c6d6df27244cd6049";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
@@ -64,16 +65,21 @@ function MyNftList(props) {
     }, [nftTokenId]);
 
     async function getMyNftList() {
-        const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts}, props.apiToken);
-        let listOfNft = [];
+        try{
+            const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts}, props.apiToken);
+            let listOfNft = [];
 
-        for (let i = 0; i < res.data.length; i++) {
-            const item = res.data[i];
+            for (let i = 0; i < res.data.length; i++) {
+                const item = res.data[i];
 
-            listOfNft.push(item);
+                listOfNft.push(item);
+            }
+            nftListRef.current = listOfNft;
+            setNftList(nftListRef.current);
+        }catch (e){
+            await props.handleLogout();
+            console.log(e);
         }
-        nftListRef.current = listOfNft;
-        setNftList(nftListRef.current);
     }
 
     function modalFadeIn(tokenId,postUse) {
@@ -136,35 +142,47 @@ function MyNftList(props) {
                 return formPostAddress2.current.focus();
             }
         }
-
-        // Argument : KIP17 Contract Address -> 해당 주소는 테스트로 Deploy 한 Contract Address
-        // (https://baobab.scope.klaytn.com/account/0xf550014532471511435af9b2b2dadd0189ce0f92?tabId=txList)
-        const provider = window['klaytn'];
-        const caver = new Caver(provider);
-        const kip17instance = new caver.klay.KIP17("0x7653556eec6a827c18a9481c6d6df27244cd6049");
-        const sender = props.accounts[0];
-        const tokenNumber = parseInt(nftToken, 16);
-        await kip17instance.burn(tokenNumber,  {from: sender}).then(async result => {
+        try{
             const saveData = {
                 tokenId: nftToken,
                 ownerId: props.accounts[0],
                 exchangeName: formName.current.value,
                 exchangeHp: `${formPhoneNumber1.current.value}-${formPhoneNumber2.current.value}-${formPhoneNumber3.current.value}`,
-                transactionHash: result.transactionHash,
                 exchangeZip: formPostZip.current.value,
                 exchangeAddress: formPostAddress.current.value,
                 exchangeAddress2: formPostAddress2.current.value,
             }
             const saveResult = await POST(`/api/v1/exchange/save`, saveData, props.apiToken);
             if(saveResult.result == 'success'){
-                alert('소각 완료');
+                const provider = window['klaytn'];
+                const caver = new Caver(provider);
+                const kip17instance = new caver.klay.KIP17(contractAddress);
+                const sender = props.accounts[0];
+                const tokenNumber = parseInt(nftToken, 16);
+                await kip17instance.burn(tokenNumber,  {from: sender}).then(async (result) => {
+                    const saveTransactionData = {
+                        contractAddress,
+                        tokenId: nftToken,
+                        ownerId: props.accounts[0],
+                        transactionHash: result.transactionHash,
+                    }
+                    const saveTransactionResult = await POST(`/api/v1/exchange/save/transaction`, saveTransactionData, props.apiToken);
+                    if(saveTransactionResult.result == 'success'){
+                        alert('신청이 완료 되었습니다.');
+                    } else {
+                        alert('신청중 오류가 발생하였습니다.');
+                    }
+                }).catch(error => {
+                    alert('소각 실패');
+                    console.log(error);
+                })
             } else {
-                alert('소각중 오류가 발생하였습니다.');
+                alert('개인정보 저장중 오류가 발생하였습니다.');
             }
-        }).catch(error => {
-            alert('소각 실패');
-            console.log(error);
-        })
+        } catch (e){
+            alert('신청 실패');
+            console.log(e);
+        }
         getMyNftList();
         modalClose();
     }

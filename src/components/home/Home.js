@@ -23,7 +23,7 @@ export default function Home(props) {
                                handleKaikasConnect={() => props.handleKaikasConnect()}/>
             )
             }
-            <MyNftList accounts={props.accounts} apiToken={props.apiToken} isConnected={props.isConnected}/>
+            <MyNftList accounts={props.accounts} apiToken={props.apiToken} isConnected={props.isConnected} handleLogout={() => props.handleLogout()}/>
         </>
     );
 }
