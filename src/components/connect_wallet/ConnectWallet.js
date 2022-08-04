@@ -33,15 +33,15 @@ function ConnectWallet(props) {
             <section className={styles.connect_wallet}>
                 <div className={styles.text_box}>
                     <h1>
-                        ANIVERSE<br/>
-                        Ticket To Burn
+                        ANIVERSE NFT<br/>
+                        [Ticket To Burn] EVENT
                     </h1>
                     <p>
-                        Stake Larva NFT and earn rewards for the Ecosystem<br/>
-                        participants!<br/>
-                        Stake Larva NFT and earn rewards for the Ecosystem<br/>
-                        participants!<br/>
-                        rewards at any time
+                        Thank you for participating in the Aniverse ecosystem.<br/>
+                        <br/>
+                        Use the tokens obtained as rewards for purchasing NFTs linked to real-life products in the Aniverse ecosystem, and exchange them for awesome prizes at a discounted price!<br/>
+                        <br/>
+                        Don't miss the chance to get the products you want while the offer lasts!<br/>
                     </p>
                     <div className={styles.button_box}>
                         {props.accounts && props.accounts.length > 0 && props.isConnected === 'YES' ? (
