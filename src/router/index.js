@@ -7,6 +7,7 @@ import {GET, POST} from "../api/api";
 import {useWeb3React} from "@web3-react/core";
 import {injected, kaikasConnector} from "../utils/web3/connectors";
 import Caver from "caver-js";
+import {isTestNet} from "../utils/web3/networks";
 
 function Index() {
 
@@ -77,12 +78,17 @@ function Index() {
 
                 const accounts = await window.klaytn.enable();
                 const account = accounts[0]
-                // todo : 8217 네트워크 체크
-                console.log(window.klaytn.networkVersion);
+                if(!isTestNet){
+                    if(window.klaytn.networkVersion !== 8217){
+                        alert('지갑을 메인넷으로 전환해주세요.');
+                        throw 'error';
+                    }
+                }
+
                 const token = localStorage.getItem('aniverse_token');
                 if(token === null){
                     //토큰생성
-                    const res = await GET(`/api/v1/auth/user/${account}/uuid`);
+                    const res = await GET(`/api/v1/auth/exchange/${account}/uuid`);
                     // sign
                     const message = res.uuid;
                     const provider = window['klaytn'];
@@ -90,7 +96,7 @@ function Index() {
                     const signedMessage = await caver.klay.sign(message, account);
                     // get JWT
                     // jwt = await requestSignin(address, signedMessage);
-                    const signin = await POST(`/api/v1/auth/user/signin`, {
+                    const signin = await POST(`/api/v1/auth/exchange/signin`, {
                         address: account,
                         message: signedMessage
                     });
