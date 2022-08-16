@@ -12,7 +12,7 @@ import connectIcon from "../../../assets/images/icon/connect.png"
 import popIcon from "../../../assets/images/icon/pop_icon.svg"
 
 function MyNftList(props) {
-    const contractAddress = "0x7653556eec6a827c18a9481c6d6df27244cd6049";
+    const contractAddress = "0xB579bA0D31DD4894E8Cb8d6666f05Fff9a759DCf";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
@@ -66,7 +66,7 @@ function MyNftList(props) {
 
     async function getMyNftList() {
         try{
-            const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts}, props.apiToken);
+            const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts[0]}, props.apiToken);
             let listOfNft = [];
 
             for (let i = 0; i < res.data.length; i++) {
