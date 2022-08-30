@@ -12,7 +12,7 @@ import connectIcon from "../../../assets/images/icon/connect.png"
 import popIcon from "../../../assets/images/icon/pop_icon.svg"
 
 function MyNftList(props) {
-    const contractAddress = "0xB579bA0D31DD4894E8Cb8d6666f05Fff9a759DCf";
+    const contractAddress = "0xfd2d56a0130c07a5bcb24c35cbbd0bca7c2d84be";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
