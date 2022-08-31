@@ -12,14 +12,13 @@ import connectIcon from "../../../assets/images/icon/connect.png"
 import popIcon from "../../../assets/images/icon/pop_icon.svg"
 
 function MyNftList(props) {
-    const contractAddress = "0xfd2d56a0130c07a5bcb24c35cbbd0bca7c2d84be";
+    const contractAddress = "0xB579bA0D31DD4894E8Cb8d6666f05Fff9a759DCf";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
     const [nftList, setNftList] = useState([])
 
     const [showLoading, setShowLoading] = useState(false); // 로딩 모달
-
 
 
     const [nftTokenId, setNftTokenId] = useState(); //선택 토큰
@@ -46,7 +45,7 @@ function MyNftList(props) {
     const [viewModalShow, setViewModalShow] = useState(false);
     const viewModalClose = () => setViewModalShow(false);
     const viewModalOpen = () => setViewModalShow(true);
-    const [viewForm, setViewForm] = useState(['Name','Hp','Zip','Address','Address2']);
+    const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
 
 
     // const [formPhoneNumber, setFormPhoneNumber] = useState([]); // 연락처
@@ -54,7 +53,7 @@ function MyNftList(props) {
     let history = useHistory();
 
     useEffect(() => {
-        if(props.accounts[0] !== undefined && props.apiToken){
+        if (props.accounts[0] !== undefined && props.apiToken) {
             getMyNftList();
         }
     }, [props.accounts]);
@@ -65,8 +64,8 @@ function MyNftList(props) {
     }, [nftTokenId]);
 
     async function getMyNftList() {
-        try{
-            const res = await POST(`/api/v1/exchange/getnft`,{address:props.accounts[0]}, props.apiToken);
+        try {
+            const res = await POST(`/api/v1/exchange/getnft`, {address: props.accounts[0]}, props.apiToken);
             let listOfNft = [];
 
             for (let i = 0; i < res.data.length; i++) {
@@ -76,90 +75,101 @@ function MyNftList(props) {
             }
             nftListRef.current = listOfNft;
             setNftList(nftListRef.current);
-        }catch (e){
+        } catch (e) {
             await props.handleLogout();
             console.log(e);
         }
     }
 
-    function modalFadeIn(tokenId,postUse) {
+    function modalFadeIn(tokenId, postUse) {
         setNftTokenId(tokenId);
-        setPostUseState(postUse);
+        if (postUse === "Y") {
+            setPostUseState(true);
+        }
         modalOpen();
     }
-    async function viewModalFadeIn(tokenId,postUse) {
+
+    async function viewModalFadeIn(tokenId, postUse) {
         setNftTokenId(tokenId);
-        setPostUseState(postUse);
-        const res = await POST(`/api/v1/exchange/info`,{tokenId}, props.apiToken);
+        if (postUse === "Y") {
+            setPostUseState(true);
+        }
+        const res = await POST(`/api/v1/exchange/info`, {tokenId}, props.apiToken);
         setViewForm([res.data.name, res.data.hp, res.data.zip, res.data.address, res.data.address2]);
         viewModalOpen();
     }
+
     async function nftTransfer(nftToken) {
-        if(!agreeState){
+        if (!agreeState) {
             alert("개인정보 수집 약관에 동의 해주세요.");
             console.log(agreeBox.current);
             return agreeBox.current.focus();
         }
         const regName = /^[가-힣]{2,4}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
-        if(formName.current.value == ""){
+        if (formName.current.value == "") {
             alert("성명을 입력해주세요.");
             return formName.current.focus();
         }
-        if(regName.test(formName.current.value) === false){
+        if (regName.test(formName.current.value) === false) {
             alert("성명은 한글 또는 영문 한가지만 사용 가능합니다.");
             return formName.current.focus();
         }
 
-        if(formPhoneNumber1.current.value == ""){
+        if (formPhoneNumber1.current.value == "") {
             alert("연락처 앞자리를 선택해주세요.");
             return formPhoneNumber1.current.focus();
         }
-        if(formPhoneNumber2.current.value == ""){
+        if (formPhoneNumber2.current.value == "") {
             alert("연락처를 입력해주세요.");
             return formPhoneNumber2.current.focus();
         }
         const regPhone2 = /([0-9]{3,4})$/;
-        if(regPhone2.test(formPhoneNumber2.current.value) === false){
+        if (regPhone2.test(formPhoneNumber2.current.value) === false) {
             alert("숫자 3~4자리를 입력해주세요.");
             return formPhoneNumber2.current.focus();
         }
-        if(formPhoneNumber3.current.value == ""){
+        if (formPhoneNumber3.current.value == "") {
             alert("연락처를 입력해주세요.");
             return formPhoneNumber3.current.focus();
         }
         const regPhone3 = /([0-9]{4})$/;
-        if(regPhone3.test(formPhoneNumber3.current.value) === false){
+        if (regPhone3.test(formPhoneNumber3.current.value) === false) {
             alert("숫자 4자리를 입력해주세요.");
             return formPhoneNumber3.current.focus();
         }
-        if(postUseState){
-            if(formPostZip.current.value == "" || formPostAddress.current.value == ""){
+        if (postUseState) {
+            if (formPostZip.current.value == "" || formPostAddress.current.value == "") {
                 alert("주소를 입력해주세요.");
                 return formPostZip.current.focus();
             }
-            if(formPostAddress2.current.value == ""){
+            if (formPostAddress2.current.value == "") {
                 alert("상세주소를 입력해주세요.");
                 return formPostAddress2.current.focus();
             }
         }
-        try{
-            const saveData = {
+        try {
+            let saveData = {
                 tokenId: nftToken,
                 ownerId: props.accounts[0],
                 exchangeName: formName.current.value,
                 exchangeHp: `${formPhoneNumber1.current.value}-${formPhoneNumber2.current.value}-${formPhoneNumber3.current.value}`,
-                exchangeZip: formPostZip.current.value,
-                exchangeAddress: formPostAddress.current.value,
-                exchangeAddress2: formPostAddress2.current.value,
+            }
+            if (postUseState) {
+                let postData = {
+                    exchangeZip: formPostZip.current.value,
+                    exchangeAddress: formPostAddress.current.value,
+                    exchangeAddress2: formPostAddress2.current.value
+                }
+                saveData = Object.assign(saveData, postData);
             }
             const saveResult = await POST(`/api/v1/exchange/save`, saveData, props.apiToken);
-            if(saveResult.result == 'success'){
+            if (saveResult.result == 'success') {
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
                 const kip17instance = new caver.klay.KIP17(contractAddress);
                 const sender = props.accounts[0];
                 const tokenNumber = parseInt(nftToken, 16);
-                await kip17instance.burn(tokenNumber,  {from: sender}).then(async (result) => {
+                await kip17instance.burn(tokenNumber, {from: sender}).then(async (result) => {
                     const saveTransactionData = {
                         contractAddress,
                         tokenId: nftToken,
@@ -167,7 +177,7 @@ function MyNftList(props) {
                         transactionHash: result.transactionHash,
                     }
                     const saveTransactionResult = await POST(`/api/v1/exchange/save/transaction`, saveTransactionData, props.apiToken);
-                    if(saveTransactionResult.result == 'success'){
+                    if (saveTransactionResult.result == 'success') {
                         alert('신청이 완료 되었습니다.');
                     } else {
                         alert('신청중 오류가 발생하였습니다.');
@@ -179,7 +189,7 @@ function MyNftList(props) {
             } else {
                 alert('개인정보 저장중 오류가 발생하였습니다.');
             }
-        } catch (e){
+        } catch (e) {
             alert('신청 실패');
             console.log(e);
         }
@@ -188,7 +198,7 @@ function MyNftList(props) {
     }
 
     const agreeCheck = (agree) => {
-        if(agree){
+        if (agree) {
             setAgreeState(true);
         } else {
             setAgreeState(false);
@@ -227,7 +237,7 @@ function MyNftList(props) {
                                 {nftList.map((item, index) => (
                                     <div key={index} className={styles.img_box}>
                                         {(() => {
-                                            if(item.is_complete == "N"){
+                                            if (item.is_complete == "N") {
                                                 switch (item.is_exchanged) {
                                                     case "N":
                                                         return <a onClick={() => {
@@ -324,8 +334,10 @@ function MyNftList(props) {
                                     <option value={"018"}>017</option>
                                     <option value={"019"}>017</option>
                                 </select>-
-                                <input ref={formPhoneNumber2} maxLength={4} style={{width: "100px"}} type={"text"} name={"ph2"}/> -
-                                <input ref={formPhoneNumber3} maxLength={4} style={{width: "100px"}} type={"text"} name={"ph3"}/>
+                                <input ref={formPhoneNumber2} maxLength={4} style={{width: "100px"}} type={"text"}
+                                       name={"ph2"}/> -
+                                <input ref={formPhoneNumber3} maxLength={4} style={{width: "100px"}} type={"text"}
+                                       name={"ph3"}/>
                             </div>
                             {postUseState &&
                                 <div className={styles.pop_form}
@@ -337,7 +349,8 @@ function MyNftList(props) {
                                                placeholder="우편번호"
                                                readOnly/><br/>
                                         <input ref={formPostAddress} style={{width: "calc(100% - 20px)"}} type="text"
-                                               name={"address1"} value={homeAddress[1] || ''} placeholder="주소" readOnly/><br/>
+                                               name={"address1"} value={homeAddress[1] || ''} placeholder="주소"
+                                               readOnly/><br/>
                                         <input ref={formPostAddress2} style={{width: "calc(100% - 20px)"}} type="text"
                                                name={"address2"} placeholder="상세주소"/>
                                     </div>
@@ -345,12 +358,14 @@ function MyNftList(props) {
                             }
                         </form>
                         <span style={{color: "red"}}>* 신청이 완료되면 보유한 NFT는 소각 처리됩니다.</span><br/>
-                        <span style={{color: "red"}}>* TokenID : {nftTokenId}</span><br/>
+                        <span style={{color: "red"}}>* TokenID : #{parseInt(nftTokenId, 16)}</span><br/>
                         <div className={styles.btnBox}>
                             <button onClick={modalClose}>
                                 취소
                             </button>
-                            <button onClick={() => {nftTransfer(nftTokenId)}}>
+                            <button onClick={() => {
+                                nftTransfer(nftTokenId)
+                            }}>
                                 제출
                             </button>
                         </div>
@@ -361,7 +376,9 @@ function MyNftList(props) {
             <Modal show={postModalShow} onHide={postModalClose}>
                 <DaumPostcode style={postCodeStyle} onComplete={handlePostCode}/>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => {postModalClose()}}>
+                    <Button variant="secondary" onClick={() => {
+                        postModalClose()
+                    }}>
                         취소
                     </Button>
                 </Modal.Footer>
@@ -374,26 +391,26 @@ function MyNftList(props) {
                 <Modal.Body>
                     <div>
                         <span className={styles.pop_title}><img src={popIcon}/> 개인정보</span>
-                            <div className={styles.pop_form}>
-                                <label>성명</label>
-                                {viewForm[0]}
-                            </div>
-                            <div className={styles.pop_form}>
-                                <label>연락처</label>
-                                {viewForm[1]}
-                            </div>
-                            {postUseState &&
-                                <div className={styles.pop_form}
-                                     style={{display: "flex", borderBottom: "3px solid #999"}}>
-                                    <label>주소</label>
-                                    <div style={{width: "calc(100% - 120px)"}}>
-                                        {viewForm[2]}<br/>
-                                        {viewForm[3]}<br/>
-                                        {viewForm[4]}
-                                    </div>
+                        <div className={styles.pop_form}>
+                            <label>성명</label>
+                            {viewForm[0]}
+                        </div>
+                        <div className={styles.pop_form}>
+                            <label>연락처</label>
+                            {viewForm[1]}
+                        </div>
+                        {postUseState &&
+                            <div className={styles.pop_form}
+                                 style={{display: "flex", borderBottom: "3px solid #999"}}>
+                                <label>주소</label>
+                                <div style={{width: "calc(100% - 120px)"}}>
+                                    {viewForm[2]}<br/>
+                                    {viewForm[3]}<br/>
+                                    {viewForm[4]}
                                 </div>
-                            }
-                        <span style={{color: "red"}}>* TokenID : {nftTokenId}</span><br/>
+                            </div>
+                        }
+                        <span style={{color: "red"}}>* TokenID : #{parseInt(nftTokenId, 16)}</span><br/>
                         <div className={styles.btnBox}>
                             <button onClick={viewModalClose}>
                                 닫기
