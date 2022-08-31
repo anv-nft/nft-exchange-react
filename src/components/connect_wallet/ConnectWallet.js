@@ -33,8 +33,8 @@ function ConnectWallet(props) {
             <section className={styles.connect_wallet}>
                 <div className={styles.text_box}>
                     <h1>
-                        ANIVERSE NFT<br/>
-                        [Ticket To Burn] EVENT
+                        ANIVERSE GIFT NFT <br/>
+                        Sales Event
                     </h1>
                     <p>
                         Thank you for participating in the Aniverse ecosystem.<br/>
