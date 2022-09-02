@@ -10,9 +10,10 @@ import Caver from "caver-js";
 import DaumPostcode from "react-daum-postcode";
 import connectIcon from "../../../assets/images/icon/connect.png"
 import popIcon from "../../../assets/images/icon/pop_icon.svg"
+import {PAUSABLE_NFT} from "../../../utils/abi/PAUSABLE_NFT";
 
 function MyNftList(props) {
-    const contractAddress = "0xB579bA0D31DD4894E8Cb8d6666f05Fff9a759DCf";
+    const contractAddress = "0xcaa0cdfb77d2b474a0d5287037fde47d3f6e2da9";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
@@ -25,7 +26,10 @@ function MyNftList(props) {
 
     // 교환정보 입력 모달
     const [modalShow, setModalShow] = useState(false);
-    const modalClose = () => setModalShow(false);
+    const modalClose = () => {
+        setModalShow(false);
+        setPostUseState(false);
+    }
     const modalOpen = () => setModalShow(true);
     const agreeBox = useRef();
     const formName = useRef();
@@ -44,7 +48,10 @@ function MyNftList(props) {
     // 교환정보확인 모달
     const [viewModalShow, setViewModalShow] = useState(false);
     const viewModalClose = () => setViewModalShow(false);
-    const viewModalOpen = () => setViewModalShow(true);
+    const viewModalOpen = () => {
+        setPostUseState(false);
+        setViewModalShow(true);
+    }
     const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
 
 
@@ -166,10 +173,18 @@ function MyNftList(props) {
             if (saveResult.result == 'success') {
                 const provider = window['klaytn'];
                 const caver = new Caver(provider);
-                const kip17instance = new caver.klay.KIP17(contractAddress);
+                const kip17instance = new caver.klay.Contract(PAUSABLE_NFT, contractAddress);
                 const sender = props.accounts[0];
                 const tokenNumber = parseInt(nftToken, 16);
-                await kip17instance.burn(tokenNumber, {from: sender}).then(async (result) => {
+                const gasLimit = await kip17instance.methods.burn(tokenNumber).estimateGas({
+                    from: props.accounts[0],
+                })
+                const gasPrice = await caver.rpc.klay.getGasPrice();
+                const burn = await kip17instance.methods.burn(tokenNumber).send({
+                    from: props.accounts[0],
+                    gas: gasLimit,
+                    gasPrice,
+                }).then(async (result) => {
                     const saveTransactionData = {
                         contractAddress,
                         tokenId: nftToken,
@@ -185,7 +200,24 @@ function MyNftList(props) {
                 }).catch(error => {
                     alert('소각 실패');
                     console.log(error);
-                })
+                });
+                // await kip17instance.methods.burn(tokenNumber, {from: sender}).then(async (result) => {
+                //     const saveTransactionData = {
+                //         contractAddress,
+                //         tokenId: nftToken,
+                //         ownerId: props.accounts[0],
+                //         transactionHash: result.transactionHash,
+                //     }
+                //     const saveTransactionResult = await POST(`/api/v1/exchange/save/transaction`, saveTransactionData, props.apiToken);
+                //     if (saveTransactionResult.result == 'success') {
+                //         alert('신청이 완료 되었습니다.');
+                //     } else {
+                //         alert('신청중 오류가 발생하였습니다.');
+                //     }
+                // }).catch(error => {
+                //     alert('소각 실패');
+                //     console.log(error);
+                // })
             } else {
                 alert('개인정보 저장중 오류가 발생하였습니다.');
             }
