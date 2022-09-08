@@ -47,10 +47,10 @@ function MyNftList(props) {
     const postModalOpen = () => setPostModalShow(true);
     // 교환정보확인 모달
     const [viewModalShow, setViewModalShow] = useState(false);
-    const viewModalClose = () => setViewModalShow(false);
-    const viewModalOpen = () => {
+    const viewModalOpen = () => setViewModalShow(true);
+    const viewModalClose = () => {
         setPostUseState(false);
-        setViewModalShow(true);
+        setViewModalShow(false);
     }
     const [viewForm, setViewForm] = useState(['Name', 'Hp', 'Zip', 'Address', 'Address2']);
 
