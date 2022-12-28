@@ -13,7 +13,7 @@ import popIcon from "../../../assets/images/icon/pop_icon.svg"
 import {PAUSABLE_NFT} from "../../../utils/abi/PAUSABLE_NFT";
 
 function MyNftList(props) {
-    const contractAddress = "0xbc855e8e589de874d6cfa7f2a85a188fbc50e6f2";
+    const contractAddress = "0xa3c368148327a57d05fdeb81f1a8c8ee1884305f";
     const [accounts, setAccounts] = useState([]);
 
     const nftListRef = useRef([]);
